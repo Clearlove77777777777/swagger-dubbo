@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.common.utils.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.http.HttpStatus;
@@ -86,8 +87,16 @@ public class DubboHttpController {
 		    logger.info("No Ref Service FOUND.");
 		    return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
 		}
+
 		ref = entry.getValue();
-		HttpMatch httpMatch = new HttpMatch(entry.getKey(), ref.getClass());
+		HttpMatch httpMatch;
+		if (AopUtils.isAopProxy(ref)){
+			// 如果该实现类被代理了，需要通过原始类去获取method，再获取参数名称列表
+			httpMatch = new HttpMatch(entry.getKey(), AopUtils.getTargetClass(entry.getValue()));
+		}else {
+			httpMatch = new HttpMatch(entry.getKey(), ref.getClass());
+		}
+
 		Method[] interfaceMethods = httpMatch.findInterfaceMethods(methodName);
 
 		Set<String> keySet = new HashSet<>(request.getParameterMap().keySet());
@@ -99,7 +108,6 @@ public class DubboHttpController {
 		}
 
 		if (null != interfaceMethods && interfaceMethods.length > 0) {
-			// 用方法上@Apioperation注解的nickname字段 匹配 OperationId 获取到正确的重载方法
 			Method[] refMethods = httpMatch.findRefMethods(interfaceMethods, operationId,
 					request.getMethod());
 			method = httpMatch.matchRefMethod(refMethods, methodName, keySet);
@@ -110,13 +118,6 @@ public class DubboHttpController {
 		}
 		// 获取方法的参数名
 		String[] parameterNames = NameDiscover.parameterNameDiscover.getParameterNames(method);
-
-		if (parameterNames == null && "java.lang.reflect.Proxy".equals(ref.getClass().getGenericSuperclass().getTypeName())){
-			// 处理对象被代理的情况
-			final Method realMethod = getRealMethodByObjName(ref.toString(), operationId, methodName, request.getMethod(), keySet);
-			if (realMethod == null){ return new ResponseEntity<String>(HttpStatus.NOT_FOUND); }
-			parameterNames = NameDiscover.parameterNameDiscover.getParameterNames(realMethod);
-		}
 		
 		logger.info("[Swagger-dubbo] Invoke by " + swaggerDubboConfig.getCluster());
 		if (SwaggerDubboProperties.CLUSTER_RPC.equals(swaggerDubboConfig.getCluster())){
@@ -177,52 +178,5 @@ public class DubboHttpController {
 		return null;
 	}
 
-//	/**
-//	 * 创建 cls 对象，并从 parametersMap 中拿出键值赋予对象中相同K的列值
-//	 */
-//	private Object generateObj(Class<?> cls, Map<String, String> parametersMap)
-//			throws JsonParseException, JsonMappingException, IOException {
-//		try{
-//			Class<?> forName = Class.forName(cls.getName());
-//			Constructor<?> constructor = forName.getDeclaredConstructor();
-//			constructor.setAccessible(true);
-//			Object obj = constructor.newInstance();
-//			for (String key : parametersMap.keySet()) {
-//				try{
-//					Field field = forName.getDeclaredField(key);
-//					field.setAccessible(true);
-//					field.set(obj, parametersMap.get(key));
-//				} catch (Exception e) {
-//					logger.info("this key: {} not in class: {}", key, cls.getName());
-//				}
-//			}
-//			return obj;
-//		}catch (Exception e){
-//			logger.info("数据封装失败", e);
-//		}
-//		return null;
-//	}
-
-
-	/**
-	 * 考虑对象被代理情况，获取真实对象的相应Method
-	 * @param objName 实现类toString 如：com.abc.xxImpl@12b34bd5
-	 * @param methodName 方法名
-	 * @return 真实的Method 对象
-	 */
-	private Method getRealMethodByObjName(String objName, String operationId, String methodName, String requestMethod, Set<String> keySet){
-		Method method = null;
-		try {
-			String name = objName.split("@")[0];
-			Class<?> clazz = Class.forName(name);
-			HttpMatch httpMatch = new HttpMatch(clazz, clazz);
-			Method[] methods = httpMatch.findInterfaceMethods(methodName);
-			Method[] refMethods = httpMatch.findRefMethods(methods, operationId, requestMethod);
-			method = httpMatch.matchRefMethod(refMethods, methodName, keySet);
-		}catch (Exception e){
-			logger.info("get real method fail");
-		}
-		return method;
-	}
 
 }

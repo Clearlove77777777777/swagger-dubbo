@@ -111,7 +111,6 @@ public class Reader {
 				extension.setDeprecated(operation, method);
 				extension.applyConsumes(context, operation, method);
 				extension.applyProduces(context, operation, method);
-				// TODO 需判断拼接 OperationId
 				extension.applyOperationId(operation, method);
 				extension.applySummary(operation, method);
 				extension.applyDescription(operation, method);
