@@ -18,16 +18,19 @@ public class DubboConfig {
     @Bean
     public ApplicationConfig applicationConfig() {
         ApplicationConfig applicationConfig = new ApplicationConfig();
-        applicationConfig.setName("dubbo-example-app");
-        applicationConfig.setOwner("yunai");
+        applicationConfig.setName("swagger-dubbo-test");
+        applicationConfig.setOwner("dengshangyu");
         return applicationConfig;
     }
 
     @Bean
     public RegistryConfig registryConfig() {
         RegistryConfig registryConfig = new RegistryConfig();
-        registryConfig.setAddress("zookeeper://127.0.0.1:2181");
+        registryConfig.setAddress("zookeeper://10.1.100.34:2181");
         registryConfig.setClient("curator");
+        registryConfig.setGroup("dubbo/live");
+        registryConfig.setProtocol("zookeeper");
+        registryConfig.setCheck(Boolean.FALSE);
         return registryConfig;
     }
 

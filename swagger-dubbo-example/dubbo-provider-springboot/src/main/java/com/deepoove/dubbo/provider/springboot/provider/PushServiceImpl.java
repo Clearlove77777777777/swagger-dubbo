@@ -1,10 +1,9 @@
 package com.deepoove.dubbo.provider.springboot.provider;
 
-import com.alibaba.dubbo.config.annotation.Service;
 import com.deepoove.swagger.dubbo.example.api.service.PushService;
-
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.dubbo.config.annotation.Service;
 
 @Service
 public class PushServiceImpl implements PushService{

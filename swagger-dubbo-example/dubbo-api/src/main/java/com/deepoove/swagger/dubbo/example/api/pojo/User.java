@@ -1,8 +1,8 @@
 package com.deepoove.swagger.dubbo.example.api.pojo;
 
-import java.io.Serializable;
-
 import io.swagger.annotations.ApiModelProperty;
+
+import java.io.Serializable;
 
 public class User implements Serializable {
 
@@ -36,4 +36,12 @@ public class User implements Serializable {
 		this.site = site;
 	}
 
+	@Override
+	public String toString() {
+		return "User{" +
+				"id='" + id + '\'' +
+				", name='" + name + '\'' +
+				", site='" + site + '\'' +
+				'}';
+	}
 }

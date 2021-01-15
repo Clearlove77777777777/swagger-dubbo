@@ -1,40 +1,23 @@
 package com.deepoove.swagger.dubbo.reader;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
-
-import io.swagger.annotations.ApiKeyAuthDefinition;
-import io.swagger.annotations.BasicAuthDefinition;
 import io.swagger.annotations.Info;
-import io.swagger.annotations.OAuth2Definition;
-import io.swagger.annotations.Scope;
-import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.annotations.*;
 import io.swagger.models.Contact;
 import io.swagger.models.ExternalDocs;
 import io.swagger.models.License;
-import io.swagger.models.Operation;
-import io.swagger.models.Path;
-import io.swagger.models.Response;
-import io.swagger.models.Scheme;
-import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
+import io.swagger.models.*;
 import io.swagger.models.auth.In;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.util.BaseReaderUtils;
 import io.swagger.util.PathUtils;
 import io.swagger.util.ReflectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.support.AopUtils;
+
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * The <code>Reader</code> class scans classes for Swagger annotations.
@@ -128,6 +111,7 @@ public class Reader {
 				extension.setDeprecated(operation, method);
 				extension.applyConsumes(context, operation, method);
 				extension.applyProduces(context, operation, method);
+				// TODO 需判断拼接 OperationId
 				extension.applyOperationId(operation, method);
 				extension.applySummary(operation, method);
 				extension.applyDescription(operation, method);

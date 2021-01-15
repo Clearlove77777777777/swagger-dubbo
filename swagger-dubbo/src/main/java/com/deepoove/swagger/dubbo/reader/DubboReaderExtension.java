@@ -115,7 +115,11 @@ public class DubboReaderExtension implements ReaderExtension {
 
 	@Override
 	public void applyOperationId(Operation operation, Method method) {
-		operation.operationId(method.getName());
+		// modify: 添加 nickname 以供前端区分接口展示
+		final ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class);
+		String operationId = null == apiOperation ? StringUtils.EMPTY
+				: StringUtils.isBlank(apiOperation.nickname()) ? StringUtils.EMPTY : apiOperation.nickname();
+		operation.operationId(method.getName() + operationId.trim());
 
 	}
 
@@ -381,6 +385,7 @@ public class DubboReaderExtension implements ReaderExtension {
 	private void applyParametersV2(ReaderContext context, Operation operation, String name,
 			Type type,Class<?> cls, Annotation[] annotations, Annotation[] interfaceParamAnnotations) {
 		Annotation apiParam = null;
+		// 读取接口方法上的 @ApiParam 注解
 		if (annotations != null) {
 			for (Annotation annotation : interfaceParamAnnotations) {
 				if (annotation instanceof ApiParam) {
@@ -388,6 +393,7 @@ public class DubboReaderExtension implements ReaderExtension {
 					break;
 				}
 			}
+			// 读取实现方法上的 @ApiParam 注解
 			if (null == apiParam) {
 				for (Annotation annotation : annotations) {
 					if (annotation instanceof ApiParam) {

@@ -113,23 +113,23 @@
 
 	<build>
 		<plugins>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-					<encoding>UTF-8</encoding>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
+
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.1</version>
-			</plugin>
+
+
+			<!--   要将源码放上去，需要加入这个插件    -->
 			<plugin>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>2.1</version>
+				<version>3.0.1</version>
 				<configuration>
 					<attach>true</attach>
 				</configuration>
@@ -142,30 +142,38 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.5</version>
-			</plugin>
 		</plugins>
 	</build>
-	
-	
-    <distributionManagement>
-        <repository>
-            <id>public-repo</id>
-            <name>Thunisoft inc internal releases repository</name>
-            <url>
-                http://repo.thunisoft.com/maven2/content/repositories/cmptreleases/
-            </url>
-        </repository>
-        <snapshotRepository>
-            <id>public-snapshots</id>
-            <name>Thunisoft inc internal snapshots repository</name>
-            <url>
-                http://repo.thunisoft.com/maven2/content/repositories/snapshots
-            </url>
-        </snapshotRepository>
-    </distributionManagement>
+
+	<repositories>
+		<repository>
+			<id>douyu-repo</id>
+			<name>douyu Repository</name>
+			<url>http://maven.dz11.douyu.com/nexus/content/groups/public/</url>
+		</repository>
+	</repositories>
+
+
+	<distributionManagement>
+
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>Internal snapshots</name>
+			<url>http://maven.dz11.com/nexus/content/repositories/douyu-bigdata-snapshots/</url>
+		</snapshotRepository>
+		<repository>
+			<id>releases</id>
+			<name>Internal Releases</name>
+			<url>http://maven.dz11.com/nexus/content/repositories/douyu-bigdata-releases/</url>
+		</repository>
+	</distributionManagement>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>douyu-repo</id>
+			<name>douyu Repository</name>
+			<url>http://maven.ocean.douyu.com/nexus/content/groups/public/</url>
+		</pluginRepository>
+	</pluginRepositories>
 
 </project>

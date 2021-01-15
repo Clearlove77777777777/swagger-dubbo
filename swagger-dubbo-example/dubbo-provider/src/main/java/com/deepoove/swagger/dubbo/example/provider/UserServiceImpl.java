@@ -1,10 +1,10 @@
 package com.deepoove.swagger.dubbo.example.provider;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.deepoove.swagger.dubbo.example.api.pojo.User;
 import com.deepoove.swagger.dubbo.example.api.service.UserService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserServiceImpl implements UserService {
 
@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
 	public void save(User user) {}
 
 	@Override
-	public User update(User user) {
+	public User update(User user, String operator) {
 		return null;
 	}
 
